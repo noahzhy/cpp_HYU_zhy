@@ -1,10 +1,10 @@
 # README #
 ## Welcome
-Welcome to my bitbucket and this git library is use as the homework what the course ask to sumbit.  
+Welcome to my Github and this git library is use as the homework what the course ask to sumbit.  
 So it's a little boring.  
   
-`/report`folder: Requirements of homework  
-`/code`folder: Code of homework  
+`/report` Requirements of homework  
+`/code` Code of homework  
   
 2018 Summer  
 ZHANG HAOYU
