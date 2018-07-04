@@ -45,3 +45,4 @@ void MinimalFighter::fight(MinimalFighter *_enemy) {
         hit(_enemy);
     }
 }
+

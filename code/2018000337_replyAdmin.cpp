@@ -5,88 +5,103 @@ using namespace std;
 
 string textList[20];
 int max_lines = 5;
+int remove_count = 0;// use to count all the numbers in command number
 
 void output() {
-	int number = 0;
-	max_lines = 0;
-	for (int i = 0; i < 21; i++) {
-		if (textList[i] != "") {
-			cout << number << " " << textList[i] << endl;
-			number = number + 1;
-			max_lines = number;
-		}
-	}
+    int number = 0;
+    max_lines = 0;
+    for (int i = 0; i < 21; i++) {
+        if (textList[i].empty() == false) {
+            cout << number << " " << textList[i] << endl;
+            number++;
+        }
+    }
+    max_lines = number;
 }
 
 void removelist(int number) {
-	textList[number] = "";
+    if (number >= 0 && number <= max_lines) {textList[number] = ""; remove_count++;}
 }
 
 void removeFromAtoB(int a, int b) {
-	for (int i = a; i <= b; i++) {removelist(i);}
+    for (int i = a; i <= b; i++) {removelist(i);}
 }
 
 void refresh() {
-	string temp = "";
-	for (int i = 0; i < max_lines; i++) {
-		for (int j = 0; j < max_lines - i; j++) {
-			if (textList[j] == "") {
-				temp = textList[j];
-				textList[j] = textList[j + 1];
-				textList[j + 1] = temp;
-			}
-		}
-	}
+    string temp = "";
+    for (int i = 0; i < max_lines; i++) {
+        for (int j = 0; j < max_lines - i; j++) {
+            if (textList[j].empty() == true) {
+                temp = textList[j];
+                textList[j] = textList[j + 1];
+                textList[j + 1] = temp;
+            }
+        }
+    }
 }
 
 int main()
 {
-	string command;
+    string command;
+    textList[0] = "Hello, Reply Administrator!";
+    textList[1] = "I will be a good programmer.";
+    textList[2] = "This class is awesome.";
+    textList[3] = "Professor Lim is wise.";
+    textList[4] = "Two TAs are kind and helpful.";
+    textList[5] = "I think male TA looks cool.";
 
-	textList[0] = "Hello, Reply Administrator!";
-	textList[1] = "I will be a good programmer.";
-	textList[2] = "This class is awesome.";
-	textList[3] = "Professor Lim is wise.";
-	textList[4] = "Two TAs are kind and helpful.";
-	textList[5] = "I think male TA looks cool.";
-
-	while (1) {
-		char str[99];
-		cin >> command;
-		// cout << command << endl;
-		if (command == "#remove") {
-
-			for (int i = 0; i < 100; i++) {str[i] = 0;}
-
-			cin >> str;
-			int count = 0;// use to count all the numbers in command number
-			for (int i = 0; i < 100; i++) {
-				if ((((int)str[i] >= 48) && ((int)str[i] <= 57)) || str[i] == '-') {
-					str[i] = str[i];
-					count++;
-				} else {str[i] = 0;}
-			}
-			for (int i = 0; i < 100; i++) {
-				if (str[i] == '-' ) {removeFromAtoB((int)(str[i - 1] - '0'), (int)(str[i + 1] - '0'));}
-			}
-			for (int i = 0; i < 100; i++) {
-				if (((int)str[i] >= 48) && ((int)str[i] <= 57)) {removelist((int)(str[i]) - '0');}
-			}
-
-
-			if (count > 0) {refresh(); output();}
-		} else if (command == "#quit") {
-			return 0;
-		} else {
-			if (command[0] != '#') {
-				string temp = "";
-				getline(cin, temp);
-				textList[max_lines + 1] = command + temp;
-				max_lines = max_lines + 1;
-				refresh();
-				output();
-			}
-		}
-	}
-	return 0;
+    while (1) {
+        string str;
+        cin >> command;
+        if (command == "#remove") {
+            remove_count = 0;
+            cin >> str;
+            int comma = 0, hyphen = 0;
+            for (int i = 0; i < 100; i++) {
+                if ((((int)str[i] >= 48) && ((int)str[i] <= 57)) || ((str[i] == '-') || (str[i] == ','))) {}
+                else {str[i] = ' ';}
+                if (str[i] == ',' ) {comma++;}
+                if (str[i] == '-') {hyphen++;}
+            }
+            if (comma > 0 && hyphen > 0) {} else {
+                if (hyphen > 0) {
+                    for (int i = 0; i < 100; i++) {
+                        if (str[i] == '-' ) {str[i] = ' ';}
+                    }
+                    stringstream ss(str);
+                    int index = 0, ready2move[99];
+                    while (ss) { ss >> ready2move[index++];}
+                    removeFromAtoB(ready2move[0], ready2move[1]);
+                }
+                if (comma > 0) {
+                    for (int i = 0; i < 100; i++) {
+                        if (str[i] == ',' ) {str[i] = ' ';}
+                    }
+                    stringstream ss(str);
+                    int index = 0, ready2move[99];
+                    while (ss) { ss >> ready2move[index++];}
+                    for (int i = 0; i < index - 1; i++) {removelist(ready2move[i]);}
+                }
+            } if (comma == 0 && hyphen == 0) {
+                stringstream ss(str);
+                int index = 0, ready2move[99];
+                while (ss) { ss >> ready2move[index++];}
+                for (int i = 0; i < --index; i++) {removelist(ready2move[i]);}
+            }
+            refresh();
+            if (remove_count > 0) { output();}
+        } else if (command == "#quit") {
+            return 0;
+        } else {
+            if (command[0] != '#') {
+                string temp = "";
+                getline(cin, temp);
+                textList[++max_lines] = command + temp;
+                max_lines++;
+                refresh();
+                output();
+            }
+        }
+    }
+    return 0;
 }
