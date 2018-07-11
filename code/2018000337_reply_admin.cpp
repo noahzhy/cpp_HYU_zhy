@@ -1,94 +1,60 @@
 #include <iostream>
 #include <string>
+#include <list>
 #include "2018000337_reply_admin.h"
-using namespace std;
-
-ReplyAdmin::ReplyAdmin() {
-	this->chats = this->chatslist;
-	this->NUM_OF_CHAT = 0;
-}
-ReplyAdmin::~ReplyAdmin() {
-	delete this->chats;
-}
-
-int ReplyAdmin::getChatCount() {
-	this->NUM_OF_CHAT = -1;
-	for (int i = 0; i < 21; i++) {
-		string ss = this->chats[i];
-		if (ss.empty() == true) {
-			break;
-		}
-		this->NUM_OF_CHAT++;
-	}
-	return this->NUM_OF_CHAT;
-}
-
 bool ReplyAdmin::addChat(string _chat) {
-	this->NUM_OF_CHAT = this->NUM_OF_CHAT+1;
-	this->chats[this->NUM_OF_CHAT] = _chat;
+	int i = chats.size();
+	if (!_chat.empty()) {
+		chats.push_back(_chat);
+		return true;
+	} else
+		return false;
+}
+bool ReplyAdmin::removeChat(int _index) {
+	int num = chats.size();
+	list<int>::iterator itList = chats.begin();
+	if (_index < num && _index >= 0) {
+		for (int i = 0; i < _index; i++) {
+			itList++;
+			chats.erase(itList);
+			return true;
+		}
+	}
+	else return false;
+}
+bool ReplyAdmin::removeChat(int *_indices, int _count) {
+	removeChat(_indices[0]);
+	for (int i = 1; i <= _count; i++) {
+		if (_indices[i] > _indices[i - 1]) {removeChat(_indices[i] - 1);}
+		else removeChat(_indices[i]);
+	}
 	return true;
 }
 
-bool ReplyAdmin::removeChat(int _index) {
-	refresh();
-	if ((_index <= this->getChatCount()) && (_index >= 0)) {
-		this->chatslist[_index] = this->emptystr;
-		return true;
-	} else {
-		return false;
-	}
-}
-
-bool ReplyAdmin::removeChat(int *_indices, int _count) {
-	bool removeSuccess = false;
-	for (int i = 0; i < _count; i++) {
-		if (removeChat(_indices[i])) {
-			removeSuccess = true;
-		}
-	}
-	if (removeSuccess) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
 bool ReplyAdmin::removeChat(int _start, int _end) {
-	bool removeSuccess = false;
-	for (int i = _start; i <= _end; i++) {
-		if (removeChat(i)) {
-			removeSuccess = true;
-		}
-	}
-	if (removeSuccess) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
-void ReplyAdmin::refresh() {
-	string temp = "";
-	for (int i = 0; i < this->NUM_OF_CHAT; i++) {
-		for (int j = 0; j < this->NUM_OF_CHAT - i; j++) {
-			string s = this->chats[j];
-			if (s.empty() == true) {
-				temp = this->chats[j];
-				this->chats[j] = this->chats[j + 1];
-				this->chats[j + 1] = temp;
-			}
-		}
-	}
+	int i = chats.size();
+	if (_start >= i || _end <= 0)return false;
+	for (; _start < _end; _start++) {removeChat(_start);}
+	return true;
 }
 
 void ReplyAdmin::printChat() {
-	refresh();
-	int number = 0;
-	for (int i = 0; i < 21; i++) {
-		string s = this->chats[i];
-		if (s.empty() == false) {
-			cout << number << " " << s << endl;
-			number++;
-		}
+	list<string>::iterator it = chats.size();
+	int index = 0;
+	for (it; it != chats.end(); it++) {
+		cout << index << " " << *it << endl;
+		index++;
 	}
 }
+
+ReplyAdmin::ReplyAdmin() {
+	// chats(NUM_OF_CHAT);
+	addChat("Hello, Reply Administrator!");
+	addChat("I will be a good programmer.");
+	addChat("This class is awesome.");
+	addChat("Professor Lim is wise.");
+	addChat("Two TAs are kind and helpful.");
+	addChat("I think male TA looks cool.");
+}
+
+ReplyAdmin::~ReplyAdmin() {}

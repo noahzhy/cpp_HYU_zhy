@@ -1,66 +1,46 @@
 #include <iostream>
 #include <string>
-#include <sstream>
 #include "2018000337_reply_admin.h"
+
 using namespace std;
 
-int main()
-{
-	string command;
-	ReplyAdmin ra;
-	ra.addChat("Hello, Reply Administrator!");
-	ra.addChat("I will be a good programmer.");
-	ra.addChat("This class is awesome.");
-	ra.addChat("Professor Lim is wise.");
-	ra.addChat("Two TAs are kind and helpful.");
-	ra.addChat("I think male TA looks cool.");
+bool replyOperation(ReplyAdmin *_replay) {
+	string str;
+	getline(cin, str);
 
-	while (1) {
-		string str;
-		cin >> command;
-		if (command == "#remove") {
-			cin >> str;
-			int comma = 0, hyphen = 0;
-			for (int i = 0; i < 100; i++) {
-				if ((((int)str[i] >= 48) && ((int)str[i] <= 57)) || ((str[i] == '-') || (str[i] == ','))) {}
-				else {str[i] = ' ';}
-				if (str[i] == ',' ) {comma++;}
-				if (str[i] == '-') {hyphen++;}
-			}
-			if (comma > 0 && hyphen > 0) {} else {
-				if (hyphen > 0) {
-					for (int i = 0; i < 100; i++) {
-						if (str[i] == '-' ) {str[i] = ' ';}
-					}
-					stringstream ss(str);
-					int index = 0, ready2move[99];
-					while (ss) { ss >> ready2move[index++];}
-					if (ra.removeChat(ready2move[0], ready2move[1])) {ra.printChat();}
-				}
-				if (comma > 0) {
-					for (int i = 0; i < 100; i++) {
-						if (str[i] == ',' ) {str[i] = ' ';}
-					}
-					stringstream ss(str);
-					int index = 0, ready2move[99];
-					while (ss) { ss >> ready2move[index++];}
-					if (ra.removeChat(ready2move, --index)) {ra.printChat();}
-				}
-			} if (comma == 0 && hyphen == 0) {
-				stringstream ss(str);
-				int index = 0, ready2move[99];
-				while (ss) { ss >> ready2move[index++];}
-				if (ra.removeChat(ready2move, --index)) {ra.printChat();}
-			}
-		} else if (command == "#quit") {
-			return 0;
-		} else {
-			if (command[0] != '#') {
-				string temp = "";
-				getline(cin, temp);
-				if (ra.addChat(command + temp)) {ra.printChat();}
+	if (str == "#quit") return false;
+	else if (str.find("#remove") != string::npos) {
+		str.erase(0, 8);
+		int start = -1, end = -1, number = -1, numbers_count = 0;
+		int* numbers = new int[NUM_OF_CHAT];
+		bool removed = false;
+		for (int i = 0; i < str.size(); ++i) {
+			char c = str[i];
+			if (isdigit(c) == true) {
+				int num = (int)c - 0;
+				if (number < 0) number = num;
+				else number = number * 10 + num;
+			} else {
+				if (c == ',') numbers[numbers_count++] = number;
+				else if (c == '-') start = number;
+				number = -1;
 			}
 		}
-	}
+		if (start >= 0) end = number;
+		if (end >= start && start >= 0) removed = _replay->removeChat(start, end);
+		else if (numbers_count > 0) {
+			numbers[numbers_count++] = number;
+			removed = _replay->removeChat(numbers, numbers_count);
+		} else if (number >= 0) removed = _replay->removeChat(number);
+		if (removed == true) _replay->printChat();
+		delete[] numbers;
+	} else if (_replay->addChat(str)) _replay->printChat();
+	return true;
+}
+
+int main(void) {
+	ReplyAdmin *replyAdmin = new ReplyAdmin();
+	while (replyOperation(replyAdmin)) {}
+	delete replyAdmin;
 	return 0;
 }

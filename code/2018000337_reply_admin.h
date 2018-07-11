@@ -3,32 +3,25 @@
 
 #include <iostream>
 #include <string>
+#include <list>
 using namespace std;
 
-class ReplyAdmin {
-	private:
-		string *chats;
-		string chatslist[20];
-		string emptystr = "";
-		int NUM_OF_CHAT;
+#define NUM_OF_CHAT 200
 
-	public:
-		ReplyAdmin();
-		~ReplyAdmin();
+class ReplyAdmin
+{
+private:
+	list<string> chats;
 
-		int getChatCount();
+public:
+	ReplyAdmin();
+	~ReplyAdmin();
 
-		bool addChat(string _chat);
-
-		bool removeChat(int _index);
-
-		bool removeChat(int *_indices, int _count);
-
-		bool removeChat(int _start, int _end);
-
-		void refresh();
-
-		void printChat();
+	bool addChat(string _chat);
+	bool removeChat(int _index);
+	bool removeChat(int *_indices, int _count);
+	bool removeChat(int _start, int _end);
+	void printChat();
 };
 
 #endif
